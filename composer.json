@@ -1,0 +1,34 @@
+{
+    "name" : "nti/payliance-bundle",
+    "description" : "Symfony PaylianceBundle",
+    "type" : "symfony-bundle",
+    "authors" : [{
+        "name" : "Benjamín Visón",
+        "email" : "benjamin@syneteksolutions.com"
+    }],
+    "keywords" : [
+        "PaylianceBundle"
+    ],
+    "license" : [
+        "MIT"
+    ],
+    "require" : {
+        "symfony/serializer": ">=2.0",
+        "craue/config-bundle": "~2.1",
+        "jms/serializer-bundle": ">=1.5",
+        "guzzlehttp/guzzle": ">=6.3"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "NTI\\PaylianceBundle" : ""
+        }
+    },
+    "target-dir" : "NTI/PaylianceBundle",
+    "repositories" : [{
+    }],
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "1.0-dev"
+        }
+    }
+}
