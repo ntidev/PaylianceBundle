@@ -1,6 +1,6 @@
 <?php
 
-namespace Payliance\ApiBundle\Models\Customer;
+namespace NTI\PaylianceBundle\Models\Customer;
 
 use JMS\Serializer\Annotation as JMS;
 

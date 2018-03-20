@@ -1,9 +1,9 @@
 <?php
 
-namespace Payliance\ApiBundle\Services;
+namespace NTI\PaylianceBundle\Services;
 
 use GuzzleHttp\Exception\ConnectException;
-use Payliance\ApiBundle\Exception\RequestException;
+use NTI\PaylianceBundle\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

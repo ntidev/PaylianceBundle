@@ -1,9 +1,9 @@
 <?php
 
-namespace Payliance\ApiBundle\Tests\Service\Customer;
+namespace NTI\PaylianceBundle\Tests\Service\Customer;
 
-use Payliance\ApiBundle\Exception\RequestException;
-use Payliance\ApiBundle\Models\Customer\PLCustomer;
+use NTI\PaylianceBundle\Exception\RequestException;
+use NTI\PaylianceBundle\Models\Customer\PLCustomer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

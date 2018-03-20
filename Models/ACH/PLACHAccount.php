@@ -1,6 +1,6 @@
 <?php
 
-namespace Payliance\ApiBundle\Models\ACH;
+namespace NTI\PaylianceBundle\Models\ACH;
 
 use JMS\Serializer\Annotation as JMS;
 

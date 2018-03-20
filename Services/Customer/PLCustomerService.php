@@ -1,12 +1,12 @@
 <?php
 
-namespace Payliance\ApiBundle\Services\Customer;
+namespace NTI\PaylianceBundle\Services\Customer;
 
 use GuzzleHttp\Psr7\Response;
-use Payliance\ApiBundle\Exception\RequestException;
-use Payliance\ApiBundle\Models\ACH\PLACHAccount;
-use Payliance\ApiBundle\Models\Customer\PLCustomer;
-use Payliance\ApiBundle\Services\PLRequestService;
+use NTI\PaylianceBundle\Exception\RequestException;
+use NTI\PaylianceBundle\Models\ACH\PLACHAccount;
+use NTI\PaylianceBundle\Models\Customer\PLCustomer;
+use NTI\PaylianceBundle\Services\PLRequestService;
 
 class PLCustomerService extends PLRequestService {
 

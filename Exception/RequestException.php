@@ -1,5 +1,5 @@
 <?php
 
-namespace Payliance\ApiBundle\Exception;
+namespace NTI\PaylianceBundle\Exception;
 
 class RequestException extends \Exception {}

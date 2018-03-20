@@ -1,11 +1,11 @@
 <?php
 
-namespace Payliance\ApiBundle\Services\ACH;
+namespace NTI\PaylianceBundle\Services\ACH;
 
 use GuzzleHttp\Psr7\Response;
-use Payliance\ApiBundle\Exception\RequestException;
-use Payliance\ApiBundle\Models\ACH\PLACHAccount;
-use Payliance\ApiBundle\Services\PLRequestService;
+use NTI\PaylianceBundle\Exception\RequestException;
+use NTI\PaylianceBundle\Models\ACH\PLACHAccount;
+use NTI\PaylianceBundle\Services\PLRequestService;
 
 /**
  * Class PLACHAccountService

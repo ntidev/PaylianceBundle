@@ -1,9 +1,9 @@
 <?php
 
-namespace Payliance\ApiBundle\Models\Payment;
+namespace NTI\PaylianceBundle\Models\Payment;
 
 use JMS\Serializer\Annotation as JMS;
-use Payliance\ApiBundle\Models\Generic\PLFailureData;
+use NTI\PaylianceBundle\Models\Generic\PLFailureData;
 
 /**
  * Class PLPayment
