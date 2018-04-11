@@ -1,10 +1,10 @@
 services:
     payliance_api.customer:
-        class: NTI\ApiBundle\Services\Customer\PLCustomerService
+        class: NTI\PaylianceBundle\Services\Customer\PLCustomerService
         arguments: ["@service_container"]
     payliance_api.ach_account:
-        class: NTI\ApiBundle\Services\ACH\PLACHAccountService
+        class: NTI\PaylianceBundle\Services\ACH\PLACHAccountService
         arguments: ["@service_container"]
     payliance_api.payment:
-        class: NTI\ApiBundle\Services\Payment\PLPaymentService
+        class: NTI\PaylianceBundle\Services\Payment\PLPaymentService
         arguments: ["@service_container"]

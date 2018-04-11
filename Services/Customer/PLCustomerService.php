@@ -99,6 +99,10 @@ class PLCustomerService extends PLRequestService {
         /** @var PLCustomer $customer */
         $customer = $this->container->get('jms_serializer')->deserialize(json_encode($content["Response"]), PLCustomer::class, 'json');
 
+        // Get the ACHAccounts
+        $achAccounts = $this->getACHAccounts($customerId);
+        $customer->setPaymentProfiles($achAccounts);
+
         return $customer;
     }
 

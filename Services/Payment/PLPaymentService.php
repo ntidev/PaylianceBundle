@@ -122,11 +122,14 @@ class PLPaymentService extends PLRequestService
     public function createOneTimeForExistingCustomer($accountId, $amount, $optional = array()) {
         $url = $this->container->get('craue_config')->get(self::CREATE_ONE_TIME_EXISTING_CUSTOMER_URL_KEY);
 
-        /** @var Response $response */
-        $response = $this->post($url, array("Request" => array_merge(array(
+        $params = array("Request" => array_merge(array(
             "AccountId" => $accountId,
             "Amount" => $amount,
-        ), $optional)));
+            "PaymentSubType" => PLPayment::PAYMENT_SUB_TYPE_CCD // Should be configurable with craue_config
+        ), $optional));
+
+        /** @var Response $response */
+        $response = $this->post($url, $params);
 
         $content = json_decode($response->getBody()->getContents(), true);
 

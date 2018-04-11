@@ -120,6 +120,14 @@ class PLCustomer
     private $LastModified;
 
     /**
+     * Custom field for the list of Payment Profiles
+     *
+     * @var array
+     * @JMS\Type("array<NTI\PaylianceBundle\Models\ACH\PLACHAccount>")
+     */
+    private $paymentProfiles;
+
+    /**
      * @return int
      */
     public function getId()
@@ -440,6 +448,24 @@ class PLCustomer
     public function setLastModified($LastModified)
     {
         $this->LastModified = $LastModified;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentProfiles()
+    {
+        return $this->paymentProfiles;
+    }
+
+    /**
+     * @param array $paymentProfiles
+     * @return PLCustomer
+     */
+    public function setPaymentProfiles($paymentProfiles)
+    {
+        $this->paymentProfiles = $paymentProfiles;
         return $this;
     }
 
