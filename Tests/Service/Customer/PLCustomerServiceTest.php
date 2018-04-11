@@ -40,7 +40,7 @@ class PLCustomerServiceTest extends KernelTestCase
         );
 
         try {
-            $customer = $this->container->get('payliance_api.customer')->create($customer);
+            $customer = $this->container->get('nti.payliance.customer')->create($customer);
         } catch (RequestException $e) {
             $this->fail("An exception occurred while creating the Customer: ".$e->getMessage());
         }
@@ -54,7 +54,7 @@ class PLCustomerServiceTest extends KernelTestCase
         $this->init();
 
         try {
-            $result = $this->container->get('payliance_api.customer')->getAll();
+            $result = $this->container->get('nti.payliance.customer')->getAll();
         } catch (RequestException $e) {
             $this->fail("An exception occurred while updating the Customer: ".$e->getMessage());
 
@@ -70,7 +70,7 @@ class PLCustomerServiceTest extends KernelTestCase
         $customer->setCompany(uniqid()."_UNIT_TEST");
 
         try {
-            $result = $this->container->get('payliance_api.customer')->update($customer);
+            $result = $this->container->get('nti.payliance.customer')->update($customer);
             $this->assertInstanceOf(PLCustomer::class, $result, "The Result was not an instance of PLCustomer.")
         } catch (RequestException $e) {
             $this->fail("An exception occurred while updating the Customer: ".$e->getMessage());
@@ -83,7 +83,7 @@ class PLCustomerServiceTest extends KernelTestCase
         $this->init();
 
         try {
-            $result = $this->container->get('payliance_api.customer')->getAll();
+            $result = $this->container->get('nti.payliance.customer')->getAll();
         } catch (RequestException $e) {
             $this->fail("An exception occurred while updating the Customer: " . $e->getMessage());
         }
@@ -97,7 +97,7 @@ class PLCustomerServiceTest extends KernelTestCase
         $customer = $result["Items"][0];
 
         try {
-            $result = $this->container->get('payliance_api.customer')->get($customer->getId());
+            $result = $this->container->get('nti.payliance.customer')->get($customer->getId());
             $this->assertInstanceOf(PLCustomer::class, $result, "The Result was not an instance of PLCustomer.")
         } catch (RequestException $e) {
             $this->fail("An exception occurred while updating the Customer: ".$e->getMessage());
