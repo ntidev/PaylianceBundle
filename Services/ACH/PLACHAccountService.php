@@ -85,10 +85,8 @@ class PLACHAccountService extends PLRequestService {
      * @return PLACHAccount
      * @throws RequestException
      */
-    public function update(PLACHAccount $ACHAccount) {
+    public function update($accountId, $data) {
         $url = $this->container->get('craue_config')->get(self::UPDATE_URL_KEY);
-
-        $data = json_decode($this->container->get('jms_serializer')->serialize($ACHAccount, 'json'), true);
 
         /** @var Response $response */
         $response = $this->post($url, array("Request" => $data));
