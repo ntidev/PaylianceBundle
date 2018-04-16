@@ -53,11 +53,9 @@ class PLACHAccountService extends PLRequestService {
      * @return PLACHAccount
      * @throws RequestException
      */
-    public function create($data) {
+    public function create($customerProfileId, $data) {
 
-        if($data instanceof PLACHAccount) {
-            $data = json_decode($this->container->get('jms_serializer')->serialize($data, 'json'), true);
-        }
+        $data["CustomerId"] = $customerProfileId;
 
         $url = $this->container->get('craue_config')->get(self::CREATE_URL_KEY);
 
