@@ -137,7 +137,7 @@ class PLCustomerService extends PLRequestService {
         // Todo: Validate before creating customer profile
         if(isset($data["payment_profiles"])) {
             foreach($data["payment_profiles"] as $paymentProfile) {
-                $this->container->get('nti.payliance.ach_account')->create($customer->getId(), $paymentProfile);
+                $this->container->get('nti.payliance.ach_account')->createAccount($customer->getId(), $paymentProfile);
             }
         }
 
