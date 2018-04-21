@@ -34,7 +34,7 @@ class PLCustomerService extends PLRequestService {
 
 
     /**
-     * Gets a list of PLCustomer Profiles in NTI
+     * Gets a list of PLCustomer Profiles
      *
      * @param $options
      * @return array
@@ -77,13 +77,13 @@ class PLCustomerService extends PLRequestService {
     }
 
     /**
-     * Gets a PLCustomer Profile in NTI
+     * Gets a PLCustomer Profile
      *
      * @param $customerId
      * @return PLCustomer
      * @throws RequestException
      */
-    public function get($customerId) {
+    public function getProfile($customerId) {
         $url = $this->container->get('craue_config')->get(self::GET_URL_KEY);
 
         /** @var Response $response */
@@ -107,13 +107,13 @@ class PLCustomerService extends PLRequestService {
     }
 
     /**
-     * Creates a new PLCustomer Profile in NTI
+     * Creates a new PLCustomer Profile
      *
      * @param $data
      * @return PLCustomer
      * @throws RequestException
      */
-    public function create($data) {
+    public function createProfile($data) {
 
         if($data instanceof PLCustomer) {
             $data = json_decode($this->container->get('jms_serializer')->serialize($data, 'json'), true);
@@ -134,18 +134,24 @@ class PLCustomerService extends PLRequestService {
         /** @var PLCustomer $customer */
         $customer = $this->container->get('jms_serializer')->deserialize(json_encode($content["Response"]), PLCustomer::class, 'json');
 
+        // Todo: Validate before creating customer profile
+        if(isset($data["payment_profiles"])) {
+            foreach($data["payment_profiles"] as $paymentProfile) {
+                $this->container->get('nti.payliance.ach_account')->create($customer->getId(), $paymentProfile);
+            }
+        }
+
         return $customer;
     }
 
-
     /**
-     * Updates a PLCustomer Profile in NTI
+     * Updates a PLCustomer Profile
      *
      * @param PLCustomer $customer
      * @return PLCustomer
      * @throws RequestException
      */
-    public function update(PLCustomer $customer) {
+    public function updateProfile(PLCustomer $customer) {
         $url = $this->container->get('craue_config')->get(self::UPDATE_URL_KEY);
 
         $data = json_decode($this->container->get('jms_serializer')->serialize($customer, 'json'), true);
@@ -166,7 +172,6 @@ class PLCustomerService extends PLRequestService {
         return $customer;
     }
 
-
     /**
      * Gets the list of ACH Accounts for a PLCustomer
      *
@@ -174,7 +179,7 @@ class PLCustomerService extends PLRequestService {
      * @return PLCustomer
      * @throws RequestException
      */
-    public function getACHAccounts($customerId) {
+    public function getAccounts($customerId) {
         $url = $this->container->get('craue_config')->get(self::ACH_ACCOUNTS_URL_KEY);
 
         /** @var Response $response */
@@ -193,7 +198,6 @@ class PLCustomerService extends PLRequestService {
         return $ACHAccounts;
     }
 
-
     /**
      * Set the Default ACH Account for a PLCustomer
      *
@@ -202,7 +206,7 @@ class PLCustomerService extends PLRequestService {
      * @return PLCustomer
      * @throws RequestException
      */
-    public function setDefaultACHAccount($customerId, $ACHAccountId) {
+    public function setDefaultAccount($customerId, $ACHAccountId) {
         $url = $this->container->get('craue_config')->get(self::ACH_ACCOUNT_SET_DEFAULT_URL_KEY);
 
         /** @var Response $response */

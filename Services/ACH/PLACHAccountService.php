@@ -21,13 +21,13 @@ class PLACHAccountService extends PLRequestService {
     const REMOVE_URL_KEY = "payliance.api.url.ach_account.remove";
 
     /**
-     * Gets an ACH Account Profile in NTI
+     * Get the ACH Account Profile
      *
      * @param $accountId
      * @return PLACHAccount
      * @throws RequestException
      */
-    public function get($accountId) {
+    public function getAccount($accountId) {
         $url = $this->container->get('craue_config')->get(self::GET_URL_KEY);
 
         /** @var Response $response */
@@ -47,13 +47,13 @@ class PLACHAccountService extends PLRequestService {
     }
 
     /**
-     * Create a new ACH Account Profile in NTI
+     * Create a new ACH Account Profile
      *
      * @param $data
      * @return PLACHAccount
      * @throws RequestException
      */
-    public function create($customerProfileId, $data) {
+    public function createAccount($customerProfileId, $data) {
 
         $data["CustomerId"] = $customerProfileId;
 
@@ -75,15 +75,14 @@ class PLACHAccountService extends PLRequestService {
         return $ACHAccount;
     }
 
-
     /**
-     * Updates an ACH Account NTI
+     * Updates an ACH Account
      *
      * @param PLACHAccount $ACHAccount
      * @return PLACHAccount
      * @throws RequestException
      */
-    public function update($accountId, $data) {
+    public function updateAccount($accountId, $data) {
         $url = $this->container->get('craue_config')->get(self::UPDATE_URL_KEY);
 
         /** @var Response $response */
@@ -103,13 +102,13 @@ class PLACHAccountService extends PLRequestService {
     }
 
     /**
-     * Removes an ACH Account Profile in NTI
+     * Removes an ACH Account Profile
      *
      * @param $accountId
      * @return bool
      * @throws RequestException
      */
-    public function remove($accountId) {
+    public function removeAccount($accountId) {
         $url = $this->container->get('craue_config')->get(self::REMOVE_URL_KEY);
 
         /** @var Response $response */
