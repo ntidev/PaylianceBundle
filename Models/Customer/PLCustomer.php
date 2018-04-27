@@ -3,6 +3,7 @@
 namespace NTI\PaylianceBundle\Models\Customer;
 
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class PLCustomer
@@ -19,113 +20,111 @@ class PLCustomer
 
     /**
      * @var string
+     *
+     * @Assert\NotBlank(message="The Customer Account Number is required for the billing information")
+     * @Assert\Length(
+     *      max = 28,
+     *      maxMessage = "The Customer Account Number cannot be longer than {{ limit }} digits"
+     * )
+     * @JMS\SerializedName("CustomerAccount")
      * @JMS\Type("string")
      */
     private $CustomerAccount;
 
     /**
      * @var string
+     *
+     * @Assert\NotBlank(message="The Firstname is required for the billing information")
+     * @Assert\Length(
+     *      max = 150,
+     *      maxMessage = "The Firstname cannot be longer than {{ limit }} digits"
+     * )
+     * @JMS\SerializedName("FirstName")
      * @JMS\Type("string")
      */
     private $FirstName;
 
     /**
      * @var string
-     * @JMS\Type("string")
-     */
-    private $MiddleName;
-
-    /**
-     * @var string
+     *
+     * @Assert\NotBlank(message="The Lastname is required for the billing information")
+     * @Assert\Length(
+     *      max = 150,
+     *      maxMessage = "The Lastname cannot be longer than {{ limit }} digits"
+     * )
+     * @JMS\SerializedName("LastName")
      * @JMS\Type("string")
      */
     private $LastName;
 
     /**
      * @var PLCustomerAddress
+     *
+     * @Assert\Valid()
      * @JMS\Type("NTI\PaylianceBundle\Models\Customer\PLCustomerAddress")
      */
     private $BillingAddress;
 
     /**
-     * @var boolean
-     * @JMS\Type("boolean")
+     * @var string
+     *
+     * @JMS\Type("string")
+     * @JMS\SerializedName("ShippingSameAsBilling")
      */
     private $ShippingSameAsBilling;
 
     /**
-     * @var PLCustomerAddress
-     * @JMS\Type("NTI\PaylianceBundle\Models\Customer\PLCustomerAddress")
-     */
-    private $ShippingAddress;
-
-    /**
      * @var string
+     *
+     * @Assert\NotBlank(message="The Company is required for the billing information")
+     * @Assert\Length(
+     *      max = 50,
+     *      maxMessage = "The Company cannot be longer than {{ limit }} digits"
+     * )
+     * @JMS\SerializedName("Company")
      * @JMS\Type("string")
      */
     private $Company;
 
     /**
      * @var string
-     * @JMS\Type("string")
-     */
-    private $AltPhone;
-
-    /**
-     * @var string
-     * @JMS\Type("string")
-     */
-    private $MobilePhone;
-
-    /**
-     * @var string
-     * @JMS\Type("string")
-     */
-    private $Fax;
-
-    /**
-     * @var string
+     *
+     * @Assert\NotBlank(message="The Email is required for the billing information.")
+     * @Assert\Email(message="The Email address is not valid.")
+     * @JMS\SerializedName("Email")
      * @JMS\Type("string")
      */
     private $Email;
 
     /**
      * @var string
-     * @JMS\Type("string")
-     */
-    private $AltEmail;
-
-    /**
-     * @var string
-     * @JMS\Type("string")
-     */
-    private $Website;
-
-    /**
-     * @var string
+     *
+     * @Assert\Length(
+     *      max = 2048,
+     *      maxMessage = "The Notes cannot be longer than {{ limit }} digits"
+     * )
+     * @JMS\SerializedName("Notes")
      * @JMS\Type("string")
      */
     private $Notes;
 
     /**
-     * @var string
-     * @JMS\Type("string")
-     */
-    private $CreatedOn;
-
-    /**
-     * @var string
-     * @JMS\Type("string")
-     */
-    private $LastModified;
-
-    /**
-     * Custom field for the list of Payment Profiles
-     *
      * @var array
+     *
+     * @Assert\Valid()
      * @JMS\Type("array<NTI\PaylianceBundle\Models\ACH\PLACHAccount>")
+     * @JMS\SerializedName("payment_profiles")
      */
     private $paymentProfiles;
+
+    /**
+     * PLCustomer constructor.
+     */
+    public function __construct()
+    {
+        $this->setShippingSameAsBilling("true");
+    }
+
 
     /**
      * @return int
@@ -184,24 +183,6 @@ class PLCustomer
     /**
      * @return string
      */
-    public function getMiddleName()
-    {
-        return $this->MiddleName;
-    }
-
-    /**
-     * @param string $MiddleName
-     * @return PLCustomer
-     */
-    public function setMiddleName($MiddleName)
-    {
-        $this->MiddleName = $MiddleName;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getLastName()
     {
         return $this->LastName;
@@ -236,7 +217,7 @@ class PLCustomer
     }
 
     /**
-     * @return bool
+     * @return string
      */
     public function isShippingSameAsBilling()
     {
@@ -244,30 +225,12 @@ class PLCustomer
     }
 
     /**
-     * @param bool $ShippingSameAsBilling
+     * @param string $ShippingSameAsBilling
      * @return PLCustomer
      */
     public function setShippingSameAsBilling($ShippingSameAsBilling)
     {
         $this->ShippingSameAsBilling = $ShippingSameAsBilling;
-        return $this;
-    }
-
-    /**
-     * @return PLCustomerAddress
-     */
-    public function getShippingAddress()
-    {
-        return $this->ShippingAddress;
-    }
-
-    /**
-     * @param PLCustomerAddress $ShippingAddress
-     * @return PLCustomer
-     */
-    public function setShippingAddress($ShippingAddress)
-    {
-        $this->ShippingAddress = $ShippingAddress;
         return $this;
     }
 
@@ -292,60 +255,6 @@ class PLCustomer
     /**
      * @return string
      */
-    public function getAltPhone()
-    {
-        return $this->AltPhone;
-    }
-
-    /**
-     * @param string $AltPhone
-     * @return PLCustomer
-     */
-    public function setAltPhone($AltPhone)
-    {
-        $this->AltPhone = $AltPhone;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMobilePhone()
-    {
-        return $this->MobilePhone;
-    }
-
-    /**
-     * @param string $MobilePhone
-     * @return PLCustomer
-     */
-    public function setMobilePhone($MobilePhone)
-    {
-        $this->MobilePhone = $MobilePhone;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFax()
-    {
-        return $this->Fax;
-    }
-
-    /**
-     * @param string $Fax
-     * @return PLCustomer
-     */
-    public function setFax($Fax)
-    {
-        $this->Fax = $Fax;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getEmail()
     {
         return $this->Email;
@@ -364,42 +273,6 @@ class PLCustomer
     /**
      * @return string
      */
-    public function getAltEmail()
-    {
-        return $this->AltEmail;
-    }
-
-    /**
-     * @param string $AltEmail
-     * @return PLCustomer
-     */
-    public function setAltEmail($AltEmail)
-    {
-        $this->AltEmail = $AltEmail;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWebsite()
-    {
-        return $this->Website;
-    }
-
-    /**
-     * @param string $Website
-     * @return PLCustomer
-     */
-    public function setWebsite($Website)
-    {
-        $this->Website = $Website;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getNotes()
     {
         return $this->Notes;
@@ -412,42 +285,6 @@ class PLCustomer
     public function setNotes($Notes)
     {
         $this->Notes = $Notes;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreatedOn()
-    {
-        return $this->CreatedOn;
-    }
-
-    /**
-     * @param string $CreatedOn
-     * @return PLCustomer
-     */
-    public function setCreatedOn($CreatedOn)
-    {
-        $this->CreatedOn = $CreatedOn;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastModified()
-    {
-        return $this->LastModified;
-    }
-
-    /**
-     * @param string $LastModified
-     * @return PLCustomer
-     */
-    public function setLastModified($LastModified)
-    {
-        $this->LastModified = $LastModified;
         return $this;
     }
 

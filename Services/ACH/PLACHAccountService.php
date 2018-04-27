@@ -3,6 +3,7 @@
 namespace NTI\PaylianceBundle\Services\ACH;
 
 use GuzzleHttp\Psr7\Response;
+use NTI\PaylianceBundle\Exception\InvalidRequestFormatException;
 use NTI\PaylianceBundle\Exception\RequestException;
 use NTI\PaylianceBundle\Models\ACH\PLACHAccount;
 use NTI\PaylianceBundle\Services\PLRequestService;
@@ -55,7 +56,17 @@ class PLACHAccountService extends PLRequestService {
      */
     public function createAccount($customerProfileId, $data) {
 
-        $data["CustomerId"] = $customerProfileId;
+        /** @var PLACHAccount $account */
+        $account = $this->container->get('jms_serializer')->deserialize(json_encode($data), PLACHAccount::class, 'json');
+        $account->setCustomerId($customerProfileId);
+
+        $validator = $this->container->get('validator');
+        $errors = $validator->validate($account);
+        if(count($errors) > 0) {
+            throw new InvalidRequestFormatException($errors);
+        }
+
+        $data = json_decode($this->container->get('jms_serializer')->serialize($account, 'json'), true);
 
         $url = $this->container->get('craue_config')->get(self::CREATE_URL_KEY);
 
@@ -83,6 +94,18 @@ class PLACHAccountService extends PLRequestService {
      * @throws RequestException
      */
     public function updateAccount($accountId, $data) {
+
+        /** @var PLACHAccount $account */
+        $account = $this->container->get('jms_serializer')->deserialize(json_encode($data), PLACHAccount::class, 'json');
+
+        $validator = $this->container->get('validator');
+        $errors = $validator->validate($account);
+        if(count($errors) > 0) {
+            throw new InvalidRequestFormatException($errors);
+        }
+
+        $data = json_decode($this->container->get('jms_serializer')->serialize($account, 'json'), true);
+
         $url = $this->container->get('craue_config')->get(self::UPDATE_URL_KEY);
 
         /** @var Response $response */

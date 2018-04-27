@@ -3,6 +3,7 @@
 namespace NTI\PaylianceBundle\Services\Customer;
 
 use GuzzleHttp\Psr7\Response;
+use NTI\PaylianceBundle\Exception\InvalidRequestFormatException;
 use NTI\PaylianceBundle\Exception\RequestException;
 use NTI\PaylianceBundle\Models\ACH\PLACHAccount;
 use NTI\PaylianceBundle\Models\Customer\PLCustomer;
@@ -116,8 +117,19 @@ class PLCustomerService extends PLRequestService {
     public function createProfile($data) {
 
         if($data instanceof PLCustomer) {
-            $data = json_decode($this->container->get('jms_serializer')->serialize($data, 'json'), true);
+            $profile = $data;
+        } else {
+            /** @var PLCustomer $profile */
+            $profile = $this->container->get('jms_serializer')->deserialize(json_encode($data), PLCustomer::class, 'json');
         }
+
+        $validator = $this->container->get('validator');
+        $errors = $validator->validate($profile);
+        if(count($errors) > 0) {
+            throw new InvalidRequestFormatException($errors);
+        }
+
+        $data = json_decode($this->container->get('jms_serializer')->serialize($profile, 'json'), true);
 
         $url = $this->container->get('craue_config')->get(self::CREATE_URL_KEY);
 
@@ -134,10 +146,11 @@ class PLCustomerService extends PLRequestService {
         /** @var PLCustomer $customer */
         $customer = $this->container->get('jms_serializer')->deserialize(json_encode($content["Response"]), PLCustomer::class, 'json');
 
-        // Todo: Validate before creating customer profile
-        if(isset($data["payment_profiles"])) {
-            foreach($data["payment_profiles"] as $paymentProfile) {
-                $this->container->get('nti.payliance.ach_account')->createAccount($customer->getId(), $paymentProfile);
+        if($profile->getPaymentProfiles()) {
+            /** @var PLACHAccount $paymentProfile */
+            foreach($profile->getPaymentProfiles() as $paymentProfile) {
+                $achAccount = json_decode($this->container->get('jms_serializer')->serialize($paymentProfile, 'json'), true);
+                $this->container->get('nti.payliance.ach_account')->createAccount($customer->getId(), $achAccount);
             }
         }
 
@@ -151,10 +164,24 @@ class PLCustomerService extends PLRequestService {
      * @return PLCustomer
      * @throws RequestException
      */
-    public function updateProfile(PLCustomer $customer) {
-        $url = $this->container->get('craue_config')->get(self::UPDATE_URL_KEY);
+    public function updateProfile($profileId, $data) {
 
-        $data = json_decode($this->container->get('jms_serializer')->serialize($customer, 'json'), true);
+        if($data instanceof PLCustomer) {
+            $profile = $data;
+        } else {
+            /** @var PLCustomer $profile */
+            $profile = $this->container->get('jms_serializer')->deserialize(json_encode($data), PLCustomer::class, 'json');
+        }
+
+        $validator = $this->container->get('validator');
+        $errors = $validator->validate($profile);
+        if(count($errors) > 0) {
+            throw new InvalidRequestFormatException($errors);
+        }
+
+        $data = json_decode($this->container->get('jms_serializer')->serialize($profile, 'json'), true);
+
+        $url = $this->container->get('craue_config')->get(self::UPDATE_URL_KEY);
 
         /** @var Response $response */
         $response = $this->post($url, array("Request" => $data));

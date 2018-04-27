@@ -3,6 +3,7 @@
 namespace NTI\PaylianceBundle\Models\ACH;
 
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class PLACHAccount
@@ -10,21 +11,46 @@ use JMS\Serializer\Annotation as JMS;
  */
 class PLACHAccount
 {
-
     /**
      * @var string
+     *
+     * @Assert\NotBlank(message="The Account Number is required for the billing information")
+     * @Assert\Regex("/^\d+/", message="The Account Number should only contain numbers")
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 100,
+     *      minMessage = "The Account Number cannot be shorter than {{ limit }} digits",
+     *      maxMessage = "The Account Number cannot be longer than {{ limit }} digits"
+     * )
+     * @JMS\SerializedName("AccountNumber")
      * @JMS\Type("string")
      */
     private $AccountNumber;
 
     /**
      * @var string
+     *
+     * @Assert\NotBlank(message="The Routing Number is required for the billing information")
+     * @Assert\Regex("/^\d+/", message="The Routing Number should only contain numbers")
+     * @Assert\Length(
+     *      min = 9,
+     *      max = 9,
+     *      exactMessage = "The Routing Number should contain {{ limit }} digits"
+     * )
+     * @JMS\SerializedName("RoutingNumber")
      * @JMS\Type("string")
      */
     private $RoutingNumber;
 
     /**
      * @var string
+     *
+     * @Assert\NotBlank(message="The Bank Name is required for the billing information")
+     * @Assert\Length(
+     *      max = 100,
+     *      maxMessage = "The Bank Name should not be longer than {{ limit }} characters"
+     * )
+     * @JMS\SerializedName("BankName")
      * @JMS\Type("string")
      */
     private $BankName;
