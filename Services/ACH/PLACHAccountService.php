@@ -95,11 +95,12 @@ class PLACHAccountService extends PLRequestService {
      * @throws RequestException
      * @throws InvalidRequestFormatException
      */
-    public function updateAccount($accountId, $data) {
+    public function updateAccount($customerProfileId, $customerPaymentProfileId, $data) {
 
         /** @var PLACHAccount $account */
         $account = $this->container->get('jms_serializer')->deserialize(json_encode($data), PLACHAccount::class, 'json');
-        $account->setId($accountId);
+        $account->setCustomerId($customerProfileId);
+        $account->setId($customerPaymentProfileId);
 
         $validator = $this->container->get('validator');
         $errors = $validator->validate($account);
