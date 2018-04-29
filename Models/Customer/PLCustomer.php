@@ -113,7 +113,7 @@ class PLCustomer
      *
      * @Assert\Valid()
      * @JMS\Type("array<NTI\PaylianceBundle\Models\ACH\PLACHAccount>")
-     * @JMS\SerializedName("payment_profiles")
+     * @JMS\SerializedName("paymentProfiles")
      */
     private $paymentProfiles;
 

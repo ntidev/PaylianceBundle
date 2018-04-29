@@ -53,6 +53,7 @@ class PLACHAccountService extends PLRequestService {
      * @param $data
      * @return PLACHAccount
      * @throws RequestException
+     * @throws InvalidRequestFormatException
      */
     public function createAccount($customerProfileId, $data) {
 
@@ -92,6 +93,7 @@ class PLACHAccountService extends PLRequestService {
      * @param PLACHAccount $ACHAccount
      * @return PLACHAccount
      * @throws RequestException
+     * @throws InvalidRequestFormatException
      */
     public function updateAccount($accountId, $data) {
 
