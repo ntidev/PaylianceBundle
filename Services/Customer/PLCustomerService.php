@@ -113,6 +113,7 @@ class PLCustomerService extends PLRequestService {
      * @param $data
      * @return PLCustomer
      * @throws RequestException
+     * @throws InvalidRequestFormatException
      */
     public function createProfile($data) {
 

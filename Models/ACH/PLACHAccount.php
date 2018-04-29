@@ -15,7 +15,7 @@ class PLACHAccount
      * @var string
      *
      * @Assert\NotBlank(message="The Account Number is required for the billing information")
-     * @Assert\Regex("/^\d+/", message="The Account Number should only contain numbers")
+     * @Assert\Regex("/^\*+\d+|\d+/", message="The Account Number should only contain numbers")
      * @Assert\Length(
      *      min = 4,
      *      max = 100,

@@ -99,6 +99,7 @@ class PLACHAccountService extends PLRequestService {
 
         /** @var PLACHAccount $account */
         $account = $this->container->get('jms_serializer')->deserialize(json_encode($data), PLACHAccount::class, 'json');
+        $account->setId($accountId);
 
         $validator = $this->container->get('validator');
         $errors = $validator->validate($account);
