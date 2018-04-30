@@ -2,6 +2,7 @@
 
 namespace NTI\PaylianceBundle\Tests\Service\Customer;
 
+use NTI\PaylianceBundle\Exception\InvalidRequestFormatException;
 use NTI\PaylianceBundle\Exception\RequestException;
 use NTI\PaylianceBundle\Models\Customer\PLCustomer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -27,8 +28,11 @@ class PLCustomerServiceTest extends KernelTestCase
         $this->init();
 
         $customer = array(
+            "Company" => "UNIT_".uniqid(),
+            "CustomerAccount" => uniqid(),
             "FirstName" => "John",
             "LastName" => "Doe",
+            "Email" => uniqid()."@".uniqid().".com",
             "BillingAddress" => array(
                 "StreetAddress1" => "1234 Main St.",
                 "StreetAddress2" => "",
@@ -40,8 +44,10 @@ class PLCustomerServiceTest extends KernelTestCase
         );
 
         try {
-            $customer = $this->container->get('nti.payliance.customer')->create($customer);
+            $customer = $this->container->get('nti.payliance.customer')->createProfile($customer);
         } catch (RequestException $e) {
+            $this->fail("An exception occurred while creating the Customer: ".$e->getMessage());
+        } catch (InvalidRequestFormatException $e) {
             $this->fail("An exception occurred while creating the Customer: ".$e->getMessage());
         }
 
@@ -70,8 +76,8 @@ class PLCustomerServiceTest extends KernelTestCase
         $customer->setCompany(uniqid()."_UNIT_TEST");
 
         try {
-            $result = $this->container->get('nti.payliance.customer')->update($customer);
-            $this->assertInstanceOf(PLCustomer::class, $result, "The Result was not an instance of PLCustomer.")
+            $result = $this->container->get('nti.payliance.customer')->updateProfile($customer->getId(), json_decode($this->container->get('jms_serializer')->serialize($customer, 'json'), true));
+            $this->assertInstanceOf(PLCustomer::class, $result, "The Result was not an instance of PLCustomer.");
         } catch (RequestException $e) {
             $this->fail("An exception occurred while updating the Customer: ".$e->getMessage());
         }
@@ -97,8 +103,8 @@ class PLCustomerServiceTest extends KernelTestCase
         $customer = $result["Items"][0];
 
         try {
-            $result = $this->container->get('nti.payliance.customer')->get($customer->getId());
-            $this->assertInstanceOf(PLCustomer::class, $result, "The Result was not an instance of PLCustomer.")
+            $result = $this->container->get('nti.payliance.customer')->getProfile($customer->getId());
+            $this->assertInstanceOf(PLCustomer::class, $result, "The Result was not an instance of PLCustomer.");
         } catch (RequestException $e) {
             $this->fail("An exception occurred while updating the Customer: ".$e->getMessage());
         }
