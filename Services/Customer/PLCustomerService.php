@@ -84,7 +84,7 @@ class PLCustomerService extends PLRequestService {
      * @return PLCustomer
      * @throws RequestException
      */
-    public function getProfile($customerId) {
+    public function getProfile($customerId, $includePaymentProfiles = true) {
         $url = $this->container->get('craue_config')->get(self::GET_URL_KEY);
 
         /** @var Response $response */
@@ -173,6 +173,9 @@ class PLCustomerService extends PLRequestService {
             /** @var PLCustomer $profile */
             $profile = $this->container->get('jms_serializer')->deserialize(json_encode($data), PLCustomer::class, 'json');
         }
+
+        // For some reason this needs to be sent again...
+        $profile->setShippingSameAsBilling("true");
 
         $validator = $this->container->get('validator');
         $errors = $validator->validate($profile);
