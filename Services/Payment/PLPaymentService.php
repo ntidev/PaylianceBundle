@@ -41,6 +41,9 @@ class PLPaymentService extends PLRequestService
     const GET_URL_KEY = "payliance.api.url.payment.get";
     const GET_ALL_URL_KEY = "payliance.api.url.payment.get_all";
 
+    const FAILURES_RECIPIENTS_KEY = 'payliance.api.failures.recipients';
+    const SUCCESS_RECIPIENTS_KEY = 'payliance.api.success.recipients';
+
     /**
      * Gets a list of Payments from NTI
      *
@@ -48,7 +51,8 @@ class PLPaymentService extends PLRequestService
      * @return array
      * @throws RequestException
      */
-    public function getAll($options = array()) {
+    public function getAll($options = array())
+    {
 
         // Defaults
         $options = array(
@@ -67,12 +71,12 @@ class PLPaymentService extends PLRequestService
         $responseData = $content["Response"];
 
         // Validate the response
-        if(isset($content["Success"]) && !$content["Success"]) {
+        if (isset($content["Success"]) && !$content["Success"]) {
             $message = (isset($content["Message"])) ? $content["Message"] : "An unknown error occurred while getting the list of Payments.";
             throw new RequestException($message);
         }
         // Deserialize the Payments
-        $payments = $this->container->get('jms_serializer')->deserialize(json_encode($responseData["Items"]),'array<'.PLPayment::class.'>' , 'json');
+        $payments = $this->container->get('jms_serializer')->deserialize(json_encode($responseData["Items"]), 'array<' . PLPayment::class . '>', 'json');
 
         return array(
             "Page" => $responseData["Page"],
@@ -83,7 +87,6 @@ class PLPaymentService extends PLRequestService
         );
     }
 
-
     /**
      * Gets the Payment Information
      *
@@ -91,7 +94,8 @@ class PLPaymentService extends PLRequestService
      * @return PLPayment
      * @throws RequestException
      */
-    public function get($paymentId) {
+    public function get($paymentId)
+    {
         $url = $this->container->get('craue_config')->get(self::GET_URL_KEY);
 
         /** @var Response $response */
@@ -99,7 +103,7 @@ class PLPaymentService extends PLRequestService
         $content = json_decode($response->getBody()->getContents(), true);
 
         // Validate the response
-        if(isset($content["Success"]) && !$content["Success"]) {
+        if (isset($content["Success"]) && !$content["Success"]) {
             $message = (isset($content["Message"])) ? $content["Message"] : "An unknown error occurred while getting the Payment information.";
             throw new RequestException($message);
         }
@@ -119,30 +123,62 @@ class PLPaymentService extends PLRequestService
      * @return PLPayment
      * @throws RequestException
      */
-    public function createOneTimeForExistingCustomer($accountId, $amount, $optional = array()) {
+    public function createOneTimeForExistingCustomer($accountId, $amount, $optional = array())
+    {
         $url = $this->container->get('craue_config')->get(self::CREATE_ONE_TIME_EXISTING_CUSTOMER_URL_KEY);
+
+        $successRecipients = explode(",", $this->container->get('craue_config')->get(self::SUCCESS_RECIPIENTS_KEY));
+        $failuresRecipients = explode(",", $this->container->get('craue_config')->get(self::FAILURES_RECIPIENTS_KEY));
 
         $params = array("Request" => array_merge(array(
             "AccountId" => $accountId,
             "Amount" => $amount,
-            "PaymentSubType" => PLPayment::PAYMENT_SUB_TYPE_CCD // Should be configurable with craue_config
+            "PaymentSubType" => PLPayment::PAYMENT_SUB_TYPE_CCD, // Should be configurable with craue_config,
+            "RequiresReceipt" => true,
         ), $optional));
+
+        if (is_array($successRecipients) && count($successRecipients) > 0) {
+            $params["SuccessReceiptOptions"] = array(
+                "SendToCustomer" => "false",
+                "SendToOtherAddresses" => $successRecipients,
+            );
+        }
+        if (is_array($failuresRecipients) && count($failuresRecipients) > 0) {
+            $params["FailureReceiptOptions"] = array(
+                "SendToCustomer" => "false",
+                "SendToOtherAddresses" => $failuresRecipients,
+            );
+        }
 
         /** @var Response $response */
         $response = $this->post($url, $params);
-
         $content = json_decode($response->getBody()->getContents(), true);
 
         // Validate the response
-        if(isset($content["Success"]) && !$content["Success"]) {
+        if (!isset($content["Response"]) || !$content["Response"]) {
             $message = (isset($content["Message"])) ? $content["Message"] : "An unknown error occurred while processing the Payment.";
             throw new RequestException($message);
         }
 
-        /** @var PLPayment $payment */
-        $payment = $this->container->get('jms_serializer')->deserialize(json_encode($content["Response"]), PLPayment::class, 'json');
+        if (isset($content["Response"]) && isset($content["Response"]["Status"]) && $content["Response"]["Status"] != "") {
+            $status = intval($content["Response"]["Status"]);
 
-        return $payment;
+            if ($status == 2) {
+                $error = "An error occurred while processing the transaction through ACH.";
+                if (isset($content["Response"]["FailureData"])) {
+                    $failureData = $content["Response"]["FailureData"];
+                    $error = $failureData["Code"] . " - " . $failureData["Description"] . ". " . $failureData["MerchantActionText"];
+                }
+                throw new RequestException($error);
+            }
+
+            /** @var PLPayment $payment */
+            $payment = $this->container->get('jms_serializer')->deserialize(json_encode($content["Response"]), PLPayment::class, 'json');
+            return $payment;
+        }
+
+        $message = (isset($content["Message"])) ? $content["Message"] : "An unknown error occurred while processing the Payment.";
+        throw new RequestException($message);
     }
 
     /**
@@ -152,7 +188,8 @@ class PLPaymentService extends PLRequestService
      * @return PLPayment
      * @throws RequestException
      */
-    public function void($paymentId) {
+    public function void($paymentId)
+    {
 
         $url = $this->container->get('craue_config')->get(self::VOID_URL_KEY);
 
@@ -162,7 +199,7 @@ class PLPaymentService extends PLRequestService
         $content = json_decode($response->getBody()->getContents(), true);
 
         // Validate the response
-        if(isset($content["Success"]) && !$content["Success"]) {
+        if (isset($content["Success"]) && !$content["Success"]) {
             $message = (isset($content["Message"])) ? $content["Message"] : "An unknown error occurred while Voiding the Payment.";
             throw new RequestException($message);
         }
@@ -180,7 +217,8 @@ class PLPaymentService extends PLRequestService
      * @return PLPayment
      * @throws RequestException
      */
-    public function refund($paymentId) {
+    public function refund($paymentId)
+    {
 
         $url = $this->container->get('craue_config')->get(self::REVERSE_URL_KEY);
 
@@ -190,7 +228,7 @@ class PLPaymentService extends PLRequestService
         $content = json_decode($response->getBody()->getContents(), true);
 
         // Validate the response
-        if(isset($content["Success"]) && !$content["Success"]) {
+        if (isset($content["Success"]) && !$content["Success"]) {
             $message = (isset($content["Message"])) ? $content["Message"] : "An unknown error occurred while Reversing the Payment.";
             throw new RequestException($message);
         }
