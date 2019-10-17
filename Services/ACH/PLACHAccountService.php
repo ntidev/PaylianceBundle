@@ -68,6 +68,7 @@ class PLACHAccountService extends PLRequestService {
         }
 
         $data = json_decode($this->container->get('jms_serializer')->serialize($account, 'json'), true);
+        $account->IsCheckingAccount() ? $data["IsCheckingAccount"] = "true" : "false";
 
         $url = $this->container->get('craue_config')->get(self::CREATE_URL_KEY);
 
@@ -109,6 +110,7 @@ class PLACHAccountService extends PLRequestService {
         }
 
         $data = json_decode($this->container->get('jms_serializer')->serialize($account, 'json'), true);
+        $account->IsCheckingAccount() ? $data["IsCheckingAccount"] = "true" : "false";
 
         $url = $this->container->get('craue_config')->get(self::UPDATE_URL_KEY);
 
