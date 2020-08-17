@@ -57,7 +57,7 @@ class PLRequestService {
         // Send the request
         try {
             $response = $client->request('POST', $url, array(
-                "form_params" => $params
+                "json" => $params
             ));
         } catch (ConnectException $ex) {
             if($this->container->has('nti.logger')) {
