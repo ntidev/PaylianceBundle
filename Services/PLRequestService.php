@@ -60,8 +60,8 @@ class PLRequestService {
                 "json" => $params
             ));
         } catch (ConnectException $ex) {
-            if($this->container->has('nti.logger')) {
-                $this->container->get('nti.logger')->logException($ex);
+            if($this->container->has('logger')) {
+                $this->container->get('logger')->error($ex);
             }
             throw new RequestException("Unable to complete the request. Please contact support at help@greenlinknetworks.com if the problem persists.");
         }
